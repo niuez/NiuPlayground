@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  init();
+  await init();
   require(['vs/editor/editor.main'], function() {
     //session = monaco.editor.createModel(text,"javascript");
     input = monaco.editor.create(document.getElementById('input'), {
