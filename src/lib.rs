@@ -6,11 +6,11 @@ extern crate niu;
 //use crate::trans::Transpile;
 
 const NIU_STD: &'static str = "
-#include <type_traits>
 trait Neg {
   type Output;
   fn neg(a: Self) -> Self#Neg::Output;
 }
+
 trait Not {
   type Output;
   fn not(a: Self) -> Self#Not::Output;
@@ -75,6 +75,15 @@ trait Index {
 trait IndexMut where Self: Index {
   fn index_mut(self: &mut Self, i: Self#Index::Arg) -> &mut Self#Index::Output;
 }
+
+trait Eq {
+  fn eq(self: &Self, right: &Self) -> bool;
+}
+
+trait Ord where Self: Eq {
+  fn le(self: &Self, right: &Self) -> bool;
+}
+
 impl BitOr<u64> for u64 {
   type Output = u64;
   fn bit_or(a: Self, b: u64) -> u64 $${a | b}$$
@@ -115,6 +124,13 @@ impl Rem<u64> for u64 {
   type Output = u64;
   fn rem(a: Self, b: u64) -> u64 $${a % b}$$
 }
+impl Eq for u64 {
+  fn eq(a: &u64, b: &u64) -> bool $${a == b}$$
+}
+impl Ord for u64 {
+  fn le(a: &u64, b: &u64) -> bool $${a < b}$$
+}
+
 impl BitOr<i64> for i64 {
   type Output = i64;
   fn bit_or(a: Self, b: i64) -> i64 $${a | b}$$
@@ -159,10 +175,13 @@ impl Neg for i64 {
   type Output = i64;
   fn neg(a: Self) -> i64 $${-a}$$
 }
-impl Not for bool {
-  type Output = bool;
-  fn not(a: Self) -> bool $${!a}$$
+impl Eq for i64 {
+  fn eq(a: &i64, b: &i64) -> bool $${a == b}$$
 }
+impl Ord for i64 {
+  fn le(a: &i64, b: &i64) -> bool $${a < b}$$
+}
+
 impl Add<f64> for f64 {
   type Output = f64;
   fn add(a: Self, b: f64) -> f64 $${a + b}$$
@@ -178,6 +197,17 @@ impl Mul<f64> for f64 {
 impl Div<f64> for f64 {
   type Output = f64;
   fn div(a: Self, b: f64) -> f64 $${a / b}$$
+}
+impl Eq for f64 {
+  fn eq(a: &f64, b: &f64) -> bool $${a == b}$$
+}
+impl Ord for f64 {
+  fn le(a: &f64, b: &f64) -> bool $${a < b}$$
+}
+
+impl Not for bool {
+  type Output = bool;
+  fn not(a: Self) -> bool $${!a}$$
 }
 ";
 
