@@ -54,7 +54,7 @@ window.addEventListener("DOMContentLoaded", function () {
     require(['vs/editor/editor.main'], function() {
       //session = monaco.editor.createModel(text,"javascript");
       input = monaco.editor.create(document.getElementById('input'), {
-        value: "#include <vector>\nstruct Vec<T> $${std::vector<$ty(T)>}$$ {\nfn new() -> Self $${std::vector<$ty(T)>()}$$\nfn init(N: u64, t: T) -> Self $${std::vector<$ty(T)>($arg(N), $arg(t))}$$\nfn push(self: &mut Self, t: T) -> void $${$arg(self)->push_back($arg(t))}$$\nfn len(self: &Self) -> u64 $${$arg(self)->size()}$$\nfn pop(self: &mut Self) -> void $${$arg(self)->pop_back()}$$\n}\n\nimpl<T> Index for Vec<T> {\ntype Output = T;\ntype Arg = u64;\nfn index(self: &Self, i: u64) -> &T $${(&$arg(self)->at($arg(i)))}$$\n}\n\nimpl<T> IndexMut for Vec<T> {\nfn index_mut(self: &mut Self, i: u64) -> &mut T $${(&$arg(self)->at($arg(i)))}$$\n}\n"});
+        value: "#include <vector>\nstruct Vec<T> $${std::vector<$ty(T)>}$$ {\nfn new() -> Self $${std::vector<$ty(T)>()}$$\nfn init(N: u64, t: T) -> Self $${std::vector<$ty(T)>($arg(N), $arg(t))}$$\nfn push(self: &mut Self, t: T) -> void $${$arg(self)->push_back($arg(t))}$$\nfn len(self: &Self) -> u64 $${$arg(self)->size()}$$\nfn pop(self: &mut Self) -> void $${$arg(self)->pop_back()}$$\n}\n\nimpl<T> Index for Vec<T> {\ntype Output = T;\ntype Arg = u64;\nfn index(self: &Self, i: u64) -> &T $${($arg(self)->at($arg(i)))}$$\n}\n\nimpl<T> IndexMut for Vec<T> {\nfn index_mut(self: &mut Self, i: u64) -> &mut T $${($arg(self)->at($arg(i)))}$$\n}\n"});
       output = monaco.editor.create(document.getElementById('output'), { language: "cpp", });
       //input.setModel(session);
       //output.setModel(session);

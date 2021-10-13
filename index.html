@@ -50,34 +50,35 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  await init();
-  require(['vs/editor/editor.main'], function() {
-    //session = monaco.editor.createModel(text,"javascript");
-    input = monaco.editor.create(document.getElementById('input'), {
-      value: "#include <vector>\nstruct Vec<T> $${std::vector<$ty(T)>}$$ {\nfn new() -> Self $${std::vector<$ty(T)>()}$$\nfn init(N: u64, t: T) -> Self $${std::vector<$ty(T)>($arg(N), $arg(t))}$$\nfn push(self: &mut Self, t: T) -> void $${$arg(self)->push_back($arg(t))}$$\nfn len(self: &Self) -> u64 $${$arg(self)->size()}$$\nfn pop(self: &mut Self) -> void $${$arg(self)->pop_back()}$$\n}\n\nimpl<T> Index for Vec<T> {\ntype Output = T;\ntype Arg = u64;\nfn index(self: &Self, i: u64) -> &T $${(&$arg(self)->at($arg(i)))}$$\n}\n\nimpl<T> IndexMut for Vec<T> {\nfn index_mut(self: &mut Self, i: u64) -> &mut T $${(&$arg(self)->at($arg(i)))}$$\n}\n"});
-    output = monaco.editor.create(document.getElementById('output'), { language: "cpp", });
-    //input.setModel(session);
-    //output.setModel(session);
-    let lastProgram = "";
+  init().then(wasm => {
+    require(['vs/editor/editor.main'], function() {
+      //session = monaco.editor.createModel(text,"javascript");
+      input = monaco.editor.create(document.getElementById('input'), {
+        value: "#include <vector>\nstruct Vec<T> $${std::vector<$ty(T)>}$$ {\nfn new() -> Self $${std::vector<$ty(T)>()}$$\nfn init(N: u64, t: T) -> Self $${std::vector<$ty(T)>($arg(N), $arg(t))}$$\nfn push(self: &mut Self, t: T) -> void $${$arg(self)->push_back($arg(t))}$$\nfn len(self: &Self) -> u64 $${$arg(self)->size()}$$\nfn pop(self: &mut Self) -> void $${$arg(self)->pop_back()}$$\n}\n\nimpl<T> Index for Vec<T> {\ntype Output = T;\ntype Arg = u64;\nfn index(self: &Self, i: u64) -> &T $${($arg(self)->at($arg(i)))}$$\n}\n\nimpl<T> IndexMut for Vec<T> {\nfn index_mut(self: &mut Self, i: u64) -> &mut T $${($arg(self)->at($arg(i)))}$$\n}\n"});
+      output = monaco.editor.create(document.getElementById('output'), { language: "cpp", });
+      //input.setModel(session);
+      //output.setModel(session);
+      let lastProgram = "";
 
-    const sync = async function () {
-      try {
-        if (
-          input.getValue() != lastProgram
-        ) {
-          lastProgram = input.getValue();
-          output.setValue("transpiling...");
-          console.log(lastProgram);
-          let transpiledProgram = await transpile(lastProgram);
-          output.setValue(transpiledProgram);
+      const sync = async function () {
+        try {
+          if (
+            input.getValue() != lastProgram
+          ) {
+            lastProgram = input.getValue();
+            output.setValue("transpiling...");
+            console.log(lastProgram);
+            let transpiledProgram = await transpile(lastProgram);
+            output.setValue(transpiledProgram);
+          }
+        } catch (e) {
+          console.log(e);
+          output.setValue(e.toString());
         }
-      } catch (e) {
-        console.log(e);
-        output.setValue(e.toString());
-      }
-      setTimeout(sync, 1000);
-    };
-    sync();
+        setTimeout(sync, 1000);
+      };
+      sync();
+    });
   });
 });
    </script>
