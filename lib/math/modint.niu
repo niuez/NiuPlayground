@@ -1,0 +1,90 @@
+import "std/u64.niu"
+import "std/opes.niu"
+
+trait Mod {
+  fn m() -> u64;
+}
+
+struct M9982 {} {}
+
+impl Mod for M9982 {
+  fn m() -> u64 { 998244353 }
+}
+
+struct Modint<M> where M: Mod {
+  a: u64
+} {
+  fn init(a: u64) -> Self {
+    Modint { a: a }
+  }
+  fn pow(self: &Self, p: u64) -> Self {
+    let mut now = *self;
+    let mut ans = Self::init(1);
+    for(let mut exp = p; exp > 0; exp = exp >> 1) {
+      if exp & 1 == 1 {
+        ans = ans * now;
+      }
+      now = now * now;
+    }
+    ans
+  }
+  fn inv(self: &Self) -> Self {
+    self.pow(M::m() - 2)
+  }
+}
+
+impl<M> Add<Modint<M>> for Modint<M> where M: Mod {
+  type Output = Self;
+  fn add(self: Self, right: Self) -> Self {
+    let a = self.a + right.a;
+    if a >= M::m() {
+      Modint { a: a - M::m() }
+    }
+    else {
+      Modint { a: a }
+    }
+  }
+}
+
+impl<M> Sub<Modint<M>> for Modint<M> where M: Mod {
+  type Output = Self;
+  fn sub(self: Self, right: Self) -> Self {
+    if self.a < right.a {
+      Modint { a: self.a + M::m() - right.a }
+    }
+    else {
+      Modint { a: self.a - right.a }
+    }
+  }
+}
+
+impl<M> Mul<Modint<M>> for Modint<M> where M: Mod {
+  type Output = Self;
+  fn mul(self: Self, right: Self) -> Self {
+    Modint { a: self.a * right.a % M::m() }
+  }
+}
+
+impl<M> Div<Modint<M>> for Modint<M> where M: Mod {
+  type Output = Self;
+  fn div(self: Self, right: Self) -> Self {
+    self * right.inv()
+  }
+}
+
+impl<M> Neg for Modint<M> where M: Mod {
+  type Output = Self;
+  fn neg(mut self: Self) -> Self {
+    if self.a == 0 {
+      self
+    }
+    else {
+      self.a = M::m() - self.a;
+      self
+    }
+  }
+}
+impl<M> Clone for Modint<M> where M: Mod {
+  fn clone(self: &Self) -> Self { Modint { a: self.a } }
+}
+impl<M> Copy for Modint<M> where M: Mod {}
