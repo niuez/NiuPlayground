@@ -5,6 +5,7 @@ extern crate niu;
 
 //use crate::trans::Transpile;
 
+use niu::content_str::*;
 fn type_check(prog: &str) -> Result<String, String> {
     let std_ope = include_str!("../lib/std/opes.niu");
     let std_u64 = include_str!("../lib/std/u64.niu");
@@ -20,9 +21,10 @@ fn type_check(prog: &str) -> Result<String, String> {
         std_bool +
         std_tuple +
         prog;
-    let (s, (_, t)) = niu::full_content::parse_full_content(&prog, "main.niu").map_err(|e| format!("{:?}", e))?;
-    if s != "" {
-        Err(format!("parse error\n{}", s))
+    let prog_content = ContentStr { s: &prog, name: 0 };
+    let (s, (_, t)) = niu::full_content::parse_full_content(prog_content, "main.niu").map_err(|e| format!("{:?}", e))?;
+    if s.s != "" {
+        Err(format!("parse error\n{}", s.s))
     }
     else {
         let mut ta = t.type_check()?;
